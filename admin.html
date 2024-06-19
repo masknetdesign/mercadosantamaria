@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração</title>
+    <link rel="stylesheet" href="stylesadmin.css">
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-firestore.js"></script>
+    <script src="admin.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Painel de Administração</h1>
+        <form id="product-form">
+            <input type="text" id="product-name" placeholder="Nome do Produto" required>
+            <input type="text" id="product-category" placeholder="Categoria do Produto" required>
+            <input type="number" id="product-price" step="0.01" placeholder="Preço do Produto" required>
+            <input type="number" id="product-stock" placeholder="Quantidade em Estoque" required>
+            <button type="submit">Adicionar Produto</button>
+        </form>
+        <div id="product-list"></div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Editar Produto</h2>
+            <form id="edit-form">
+                <input type="text" id="edit-name" placeholder="Nome do Produto" required>
+                <input type="text" id="edit-category" placeholder="Categoria do Produto" required>
+                <input type="number" id="edit-price" step="0.01" placeholder="Preço do Produto" required>
+                <input type="number" id="edit-stock" placeholder="Quantidade em Estoque" required>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
