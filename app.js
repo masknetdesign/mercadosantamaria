@@ -1,11 +1,11 @@
 // Configuração do Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyCc13jXAn0iMpA51o3xuSrEpjdkJjXLv2Q",
-  authDomain: "mercado-santa-maria.firebaseapp.com",
-  projectId: "mercado-santa-maria",
-  storageBucket: "mercado-santa-maria.appspot.com",
-  messagingSenderId: "561473746533",
-  appId: "1:561473746533:web:253f4b8be9009aa522b88c"
+    authDomain: "mercado-santa-maria.firebaseapp.com",
+    projectId: "mercado-santa-maria",
+    storageBucket: "mercado-santa-maria.appspot.com",
+    messagingSenderId: "561473746533",
+    appId: "1:561473746533:web:253f4b8be9009aa522b88c"
 };
 
 // Inicializando o Firebase

@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos</title>
-    <link rel="stylesheet" href="stylesprodutos.css">
+    <title>Carrinho de Compras</title>
+    <link rel="stylesheet" href="stylescarrinho.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-firestore.js"></script>
-    <script src="exibeprodutos.js" defer></script>
+    <script defer src="carrinho.js"></script>
 </head>
 <body>
+
     <header>
-        <h1>Nossos Produtos</h1>
-        <div id="cart-container">
-            <i class="material-icons" id="cart-icon">shopping_cart</i>
-            <span id="cart-count">0</span>
-        </div>
+        <h1>Seu Carrinho de Compras</h1>
     </header>
-    <div class="container">
-        <div id="products-container"></div>
+
+    <div id="cart-items" class="cart-items-container">
+        <!-- Itens do Carrinho serão adicionados aqui dinamicamente -->
     </div>
+
+    <div id="total-price" class="total-price">
+        Total: R$ <span id="total-amount">0.00</span>
+    </div>
+
+    <button id="checkout-btn" class="checkout-btn">Concluir Compra</button>
+
+    <span id="cart-count" class="cart-count"></span> <!-- Contador de itens do carrinho -->
+
     <footer>
         <a href="produtos.html"><i class="material-icons">home</i></a>
         <a href="carrinho.html"><i class="material-icons">shopping_cart</i></a>
     </footer>
+
 </body>
 </html>
