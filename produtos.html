@@ -10,6 +10,31 @@
     <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-firestore.js"></script>
     <script src="exibeprodutos.js" defer></script>
+    <style>
+        /* Adicione aqui os estilos para a responsividade da caixa de busca */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #search-box {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Ajustes para telas menores */
+        @media (max-width: 600px) {
+            #search-box {
+                width: 90%;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -19,8 +44,66 @@
             <span id="cart-count">0</span>
         </div>
     </header>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Buscar produtos...">
+    </div>
     <div class="container">
         <div id="products-container"></div>
     </div>
+    <footer>
+        <a href="produtos.html"><i class="material-icons">home</i></a>
+        <a href="carrinho.html"><i class="material-icons">shopping_cart</i></a>
+    </footer>
+    <script>
+        // Função para buscar e exibir produtos filtrados
+        async function fetchAndDisplayProducts(filter = '') {
+            try {
+                const snapshot = await db.collection('products').get();
+
+                if (snapshot.empty) {
+                    productsContainer.innerHTML = '<p>Nenhum produto disponível.</p>';
+                    return;
+                }
+
+                productsContainer.innerHTML = ''; // Limpa o conteúdo anterior
+                snapshot.forEach((doc) => {
+                    const product = doc.data();
+                    if (product.name.toLowerCase().includes(filter.toLowerCase())) {
+                        const productItem = document.createElement('div');
+                        productItem.classList.add('card');
+                        productItem.innerHTML = `
+                            <h3>${product.name}</h3>
+                            <p>Preço: R$ ${product.price.toFixed(2)}</p>
+                            <p>Estoque: <span id="stock-${doc.id}">${product.stock}</span></p>
+                            <button onclick="buyProduct('${doc.id}', '${product.name}', ${product.price})">Comprar</button>
+                        `;
+                        productsContainer.appendChild(productItem);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Erro ao buscar produtos:', error);
+                productsContainer.innerHTML = '<p>Ocorreu um erro ao buscar produtos.</p>';
+            }
+        }
+
+        // Evento de input na caixa de busca
+        document.getElementById('search-box').addEventListener('input', (event) => {
+            fetchAndDisplayProducts(event.target.value);
+        });
+
+        // Carregar produtos ao iniciar
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Usuário está autenticado, carregar produtos e atualizar contador do carrinho
+                fetchAndDisplayProducts();
+                updateCartCount();
+            } else {
+                // Usuário não está autenticado, limpar produtos e contador do carrinho
+                productsContainer.innerHTML = '<p>Por favor, faça login para ver os produtos.</p>';
+                cartCountElement.textContent = '0';
+            }
+        });
+    </script>
 </body>
 </html>
