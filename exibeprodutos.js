@@ -13,6 +13,16 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
+// Carregar o contador do carrinho do localStorage
+let cartCount = JSON.parse(localStorage.getItem('cartCount')) || 0;
+
+// Atualizar contador do carrinho
+function updateCartCount() {
+    const cartCountElement = document.getElementById('cart-count');
+    cartCountElement.textContent = cartCount;
+    localStorage.setItem('cartCount', JSON.stringify(cartCount));
+}
+
 // Buscar e exibir produtos
 async function fetchProducts() {
     const productsContainer = document.getElementById('products-container');
@@ -42,6 +52,13 @@ async function buyProduct(productId, currentStock) {
                 stock: newStock
             });
 
+            // Atualizar a quantidade em estoque exibida
+            document.getElementById(`stock-${productId}`).textContent = newStock;
+
+            // Adicionar ao carrinho e atualizar contador
+            cartCount += 1;
+            updateCartCount();
+
             // Recarregar a página para atualizar os dados
             window.location.reload();
         } catch (error) {
@@ -54,3 +71,4 @@ async function buyProduct(productId, currentStock) {
 
 // Carregar produtos ao iniciar
 fetchProducts();
+updateCartCount();
