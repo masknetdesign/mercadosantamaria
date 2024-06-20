@@ -85,7 +85,7 @@ async function removeCartItem(cartItemId) {
 
 // Função para enviar o pedido pelo WhatsApp
 function sendOrderToWhatsApp(orderDetails) {
-    const phoneNumber = '5581999999999'; // Substitua pelo número de telefone desejado
+    const phoneNumber = '5511988896517'; // Substitua pelo número de telefone desejado
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderDetails)}`;
     window.open(whatsappUrl, '_blank');
 }
