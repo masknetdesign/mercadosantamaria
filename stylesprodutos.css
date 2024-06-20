@@ -21,8 +21,8 @@ header h1 {
     position: relative;
 }
 
-#cart-icon {
-    width: 40px;
+.material-icons {
+    font-size: 40px;
     cursor: pointer;
 }
 
@@ -34,7 +34,7 @@ header h1 {
     color: white;
     border-radius: 50%;
     padding: 5px 10px;
-    font-size: 14px;
+    font-size: 11px;
 }
 
 .container {
