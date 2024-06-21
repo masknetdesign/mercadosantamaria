@@ -1,70 +1,101 @@
+/* Estilo geral */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-}
-
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
+    background-color: #f8f8f8;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-.cart-items {
-    margin-bottom: 20px;
+.cart-items-container {
+    flex-grow: 1;
+    padding: 20px;
 }
 
 .cart-item {
-    border-bottom: 1px solid #ccc;
-    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
-.cart-item h3 {
-    margin: 5px 0;
+.cart-item div {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item div span {
+    margin: 0 10px;
+}
+
+.cart-item .material-icons {
+    cursor: pointer;
+    margin-left: 10px;
 }
 
 .total-price {
-    font-weight: bold;
-    margin-top: 10px;
+    padding: 20px;
     text-align: right;
+    font-size: 1.5em;
+    background-color: #f8f8f8;
 }
 
-button {
-    background-color: #4CAF50;
+.checkout-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745;
     color: white;
     border: none;
-    padding: 10px 20px;
+    font-size: 1.2em;
     cursor: pointer;
-    border-radius: 4px;
-    font-size: 16px;
 }
 
-button:hover {
-    background-color: #45a049;
+.checkout-btn:hover {
+    background-color: #218838;
+}
+
+.cart-count {
+    display: none;
 }
 
 footer {
+    background-color: #f8f8f8;
+    padding: 20px;
     text-align: center;
-    margin-top: 20px;
+    margin-top: auto;
 }
 
 footer a {
     margin: 0 10px;
-    color: #333;
     text-decoration: none;
-    font-size: 24px;
+    color: #333;
 }
 
-footer a:hover {
-    color: #4CAF50;
+footer a .material-icons {
+    vertical-align: middle;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 600px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkout-btn {
+        font-size: 1em;
+        padding: 10px;
+    }
+
+    .total-price {
+        font-size: 1.2em;
+    }
 }

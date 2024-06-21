@@ -1,40 +1,37 @@
+/* Estilo geral */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
     background-color: #f8f8f8;
-    border-bottom: 1px solid #ddd;
-}
-
-header h1 {
-    margin: 0;
-}
-
-#cart-container {
-    display: flex;
-    align-items: center;
+    padding: 20px;
+    text-align: center;
     position: relative;
 }
 
-.material-icons {
-    font-size: 40px;
+#cart-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     cursor: pointer;
 }
 
-#cart-count {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 5px 10px;
-    font-size: 11px;
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#search-box {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .container {
@@ -42,9 +39,33 @@ header h1 {
 }
 
 .card {
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     padding: 20px;
     margin: 10px;
     text-align: center;
+}
+
+footer {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+}
+
+footer a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+footer a .material-icons {
+    vertical-align: middle;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 600px) {
+    #search-box {
+        width: 90%;
+        font-size: 14px;
+    }
 }

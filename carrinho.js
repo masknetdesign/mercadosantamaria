@@ -10,151 +10,127 @@ const firebaseConfig = {
 
 // Inicializando o Firebase
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.firestore();
 const auth = firebase.auth();
 
 // Referências aos elementos HTML
 const cartItemsContainer = document.getElementById('cart-items');
 const totalAmountElement = document.getElementById('total-amount');
-const checkoutBtn = document.getElementById('checkout-btn');
 const cartCountElement = document.getElementById('cart-count');
+const checkoutButton = document.getElementById('checkout-btn');
 
-// Função para carregar itens do carrinho
-async function loadCartItems() {
-    cartItemsContainer.innerHTML = ''; // Limpa o conteúdo anterior
-    let totalPrice = 0; // Inicializar o total de preço
-
+// Função para buscar itens do carrinho e exibi-los
+async function fetchCartItems() {
     try {
         const user = auth.currentUser;
-
-        if (user) {
-            // Consultar os itens do carrinho do usuário logado
-            const snapshot = await db.collection('cartItems')
-                .where('userId', '==', user.uid)
-                .get();
-
-            if (snapshot.empty) {
-                cartItemsContainer.innerHTML = '<p>Seu carrinho está vazio.</p>';
-                totalAmountElement.textContent = `0.00`;
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const cartItem = doc.data();
-                const cartItemElement = document.createElement('div');
-                cartItemElement.classList.add('cart-item');
-                cartItemElement.innerHTML = `
-                    <h3>${cartItem.productName}</h3>
-                    <p>Preço: R$ ${cartItem.productPrice.toFixed(2)}</p>
-                    <p>Quantidade: ${cartItem.quantity}</p>
-                    <button onclick="removeCartItem('${doc.id}')">Remover</button>
-                `;
-                cartItemsContainer.appendChild(cartItemElement);
-
-                // Atualizar o preço total
-                totalPrice += cartItem.productPrice * cartItem.quantity;
-            });
-
-            // Exibir o preço total
-            totalAmountElement.textContent = `${totalPrice.toFixed(2)}`;
-
-        } else {
-            // Usuário não está autenticado
-            cartItemsContainer.innerHTML = '<p>Por favor, faça login para ver seu carrinho.</p>';
-            totalAmountElement.textContent = `0.00`;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar itens do carrinho:', error);
-        cartItemsContainer.innerHTML = '<p>Ocorreu um erro ao carregar seu carrinho.</p>';
-        totalAmountElement.textContent = `0.00`;
-    }
-}
-
-// Função para remover item do carrinho
-async function removeCartItem(cartItemId) {
-    try {
-        await db.collection('cartItems').doc(cartItemId).delete();
-        // Recarregar a lista de itens do carrinho após a remoção
-        loadCartItems();
-    } catch (error) {
-        console.error('Erro ao remover item do carrinho:', error);
-        alert('Erro ao remover item do carrinho. Tente novamente mais tarde.');
-    }
-}
-
-// Função para enviar o pedido pelo WhatsApp
-function sendOrderToWhatsApp(orderDetails) {
-    const phoneNumber = '5511988896517'; // Substitua pelo número de telefone desejado
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderDetails)}`;
-    window.open(whatsappUrl, '_blank');
-}
-
-// Evento de clique no botão "Concluir Compra"
-checkoutBtn.addEventListener('click', async () => {
-    const user = auth.currentUser;
-
-    if (!user) {
-        alert('Você precisa estar logado para concluir a compra.');
-        return;
-    }
-
-    try {
-        // Consultar os itens do carrinho do usuário logado
-        const snapshot = await db.collection('cartItems')
-            .where('userId', '==', user.uid)
-            .get();
-
-        if (snapshot.empty) {
-            alert('Seu carrinho está vazio.');
+        if (!user) {
+            alert('Você precisa estar logado para ver o carrinho.');
+            window.location.href = 'login.html';
             return;
         }
 
-        // Construir a mensagem do pedido
-        let orderDetails = `Pedido de ${user.email}:\n\n`;
-        let totalPrice = 0;
+        const snapshot = await db.collection('cartItems').where('userId', '==', user.uid).get();
 
-        snapshot.forEach(doc => {
+        if (snapshot.empty) {
+            cartItemsContainer.innerHTML = '<p>Seu carrinho está vazio.</p>';
+            totalAmountElement.textContent = '0.00';
+            return;
+        }
+
+        cartItemsContainer.innerHTML = ''; // Limpa o conteúdo anterior
+        let totalAmount = 0;
+
+        snapshot.forEach((doc) => {
             const cartItem = doc.data();
-            const itemTotal = cartItem.productPrice * cartItem.quantity;
-            orderDetails += `${cartItem.productName} - Quantidade: ${cartItem.quantity}, Preço: R$ ${cartItem.productPrice.toFixed(2)}, Total: R$ ${itemTotal.toFixed(2)}\n`;
-            totalPrice += itemTotal;
+            totalAmount += cartItem.totalPrice;
+
+            const cartItemElement = document.createElement('div');
+            cartItemElement.classList.add('cart-item');
+            cartItemElement.innerHTML = `
+                <div>${cartItem.productName}</div>
+                <div>
+                    <i class="material-icons" onclick="subtractQuantity('${doc.id}', ${cartItem.productPrice})">remove</i>
+                    <span>${cartItem.quantity}</span>
+                    <i class="material-icons" onclick="addQuantity('${doc.id}', ${cartItem.productPrice})">add</i>
+                </div>
+                <div>Preço: R$ ${cartItem.productPrice.toFixed(2)}</div>
+                <div>Total: R$ ${cartItem.totalPrice.toFixed(2)}</div>
+                <i class="material-icons" onclick="removeItem('${doc.id}')">delete</i>
+            `;
+            cartItemsContainer.appendChild(cartItemElement);
         });
 
-        orderDetails += `\nPreço Total: R$ ${totalPrice.toFixed(2)}`;
+        totalAmountElement.textContent = totalAmount.toFixed(2);
+    } catch (error) {
+        console.error('Erro ao buscar itens do carrinho:', error);
+        cartItemsContainer.innerHTML = '<p>Ocorreu um erro ao buscar itens do carrinho.</p>';
+    }
+}
 
-        // Enviar a mensagem pelo WhatsApp
-        sendOrderToWhatsApp(orderDetails);
+// Função para adicionar quantidade
+async function addQuantity(itemId, productPrice) {
+    const itemRef = db.collection('cartItems').doc(itemId);
+    const item = await itemRef.get();
 
-        // Limpar o carrinho do usuário
+    if (item.exists) {
+        const newQuantity = item.data().quantity + 1;
+        await itemRef.update({
+            quantity: newQuantity,
+            totalPrice: newQuantity * productPrice
+        });
+        fetchCartItems();
+    }
+}
+
+// Função para subtrair quantidade
+async function subtractQuantity(itemId, productPrice) {
+    const itemRef = db.collection('cartItems').doc(itemId);
+    const item = await itemRef.get();
+
+    if (item.exists) {
+        const newQuantity = item.data().quantity - 1;
+        if (newQuantity > 0) {
+            await itemRef.update({
+                quantity: newQuantity,
+                totalPrice: newQuantity * productPrice
+            });
+        } else {
+            await itemRef.delete();
+        }
+        fetchCartItems();
+    }
+}
+
+// Função para remover item
+async function removeItem(itemId) {
+    await db.collection('cartItems').doc(itemId).delete();
+    fetchCartItems();
+}
+
+// Função para concluir a compra
+checkoutButton.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (user) {
+        const cartItemsRef = db.collection('cartItems').where('userId', '==', user.uid);
+        const snapshot = await cartItemsRef.get();
+
         const batch = db.batch();
         snapshot.forEach(doc => {
             batch.delete(doc.ref);
         });
+
         await batch.commit();
-
-        // Atualizar a interface
-        cartItemsContainer.innerHTML = '<p>Seu carrinho está vazio.</p>';
-        totalAmountElement.textContent = `0.00`;
-        cartCount = 0;
-        updateCartCount();
-
-        alert('Pedido enviado com sucesso!');
-
-    } catch (error) {
-        console.error('Erro ao concluir a compra:', error);
-        alert('Erro ao concluir a compra. Tente novamente mais tarde.');
+        alert('Compra concluída com sucesso!');
+        window.location.href = 'produtos.html';
     }
 });
 
-// Verificar se o usuário está autenticado ao iniciar
-auth.onAuthStateChanged(user => {
+// Carregar itens do carrinho ao iniciar
+auth.onAuthStateChanged((user) => {
     if (user) {
-        // Usuário está autenticado, carregar itens do carrinho
-        loadCartItems();
+        fetchCartItems();
     } else {
-        // Usuário não está autenticado, limpar itens do carrinho
         cartItemsContainer.innerHTML = '<p>Por favor, faça login para ver seu carrinho.</p>';
-        totalAmountElement.textContent = `0.00`;
+        totalAmountElement.textContent = '0.00';
     }
 });

@@ -1,34 +1,23 @@
-// Configuração do Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyCc13jXAn0iMpA51o3xuSrEpjdkJjXLv2Q",
-    authDomain: "mercado-santa-maria.firebaseapp.com",
-    projectId: "mercado-santa-maria",
-    storageBucket: "mercado-santa-maria.appspot.com",
-    messagingSenderId: "561473746533",
-    appId: "1:561473746533:web:253f4b8be9009aa522b88c"
-};
-
-// Inicializando o Firebase
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-const auth = firebase.auth();
+// produtos.js
 
 // Referências aos elementos HTML
 const productsContainer = document.getElementById('products-container');
 const cartCountElement = document.getElementById('cart-count');
+const searchBox = document.getElementById('search-box');
+const cartIcon = document.getElementById('cart-icon');
 
 // Variável para armazenar o total do carrinho
 let cartCount = JSON.parse(localStorage.getItem('cartCount')) || 0;
 
-// Atualizar contador do carrinho
-function updateCartCount() {
+// Função para limpar o contador do carrinho
+function clearCartCount() {
+    cartCount = 0;
     cartCountElement.textContent = cartCount;
     localStorage.setItem('cartCount', JSON.stringify(cartCount));
 }
 
-// Buscar e exibir produtos
-async function fetchProducts() {
+// Função para buscar e exibir produtos filtrados
+async function fetchAndDisplayProducts(filter = '') {
     try {
         const snapshot = await db.collection('products').get();
 
@@ -40,15 +29,17 @@ async function fetchProducts() {
         productsContainer.innerHTML = ''; // Limpa o conteúdo anterior
         snapshot.forEach((doc) => {
             const product = doc.data();
-            const productItem = document.createElement('div');
-            productItem.classList.add('card');
-            productItem.innerHTML = `
-                <h3>${product.name}</h3>
-                <p>Preço: R$ ${product.price.toFixed(2)}</p>
-                <p>Estoque: <span id="stock-${doc.id}">${product.stock}</span></p>
-                <button onclick="buyProduct('${doc.id}', '${product.name}', ${product.price})">Comprar</button>
-            `;
-            productsContainer.appendChild(productItem);
+            if (product.name.toLowerCase().includes(filter.toLowerCase())) {
+                const productItem = document.createElement('div');
+                productItem.classList.add('card');
+                productItem.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Preço: R$ ${product.price.toFixed(2)}</p>
+                    <p>Estoque: <span id="stock-${doc.id}">${product.stock}</span></p>
+                    <button onclick="buyProduct('${doc.id}', '${product.name}', ${product.price}, ${product.stock})">Comprar</button>
+                `;
+                productsContainer.appendChild(productItem);
+            }
         });
 
     } catch (error) {
@@ -58,7 +49,7 @@ async function fetchProducts() {
 }
 
 // Função para comprar produto
-async function buyProduct(productId, productName, productPrice) {
+async function buyProduct(productId, productName, productPrice, productStock) {
     const user = auth.currentUser;
 
     if (!user) {
@@ -94,18 +85,10 @@ async function buyProduct(productId, productName, productPrice) {
             });
         }
 
-        // Reduzir o estoque em 1
-        const productRef = db.collection('products').doc(productId);
-        const productDoc = await productRef.get();
-
-        if (!productDoc.exists) {
-            throw new Error('Produto não encontrado no estoque.');
-        }
-
-        const currentStock = productDoc.data().stock;
-        if (currentStock > 0) {
-            const newStock = currentStock - 1;
-            await productRef.update({ stock: newStock });
+        // Reduzir o estoque em 1 apenas se houver estoque disponível
+        if (productStock > 0) {
+            const newStock = productStock - 1;
+            await db.collection('products').doc(productId).update({ stock: newStock });
             document.getElementById(`stock-${productId}`).textContent = newStock;
         } else {
             alert('Produto esgotado!');
@@ -122,15 +105,38 @@ async function buyProduct(productId, productName, productPrice) {
     }
 }
 
-// Verificar se o usuário está autenticado ao iniciar
+// Função para atualizar o contador do carrinho
+function updateCartCount() {
+    cartCountElement.textContent = cartCount;
+    localStorage.setItem('cartCount', JSON.stringify(cartCount));
+}
+
+// Evento de input na caixa de busca
+searchBox.addEventListener('input', (event) => {
+    fetchAndDisplayProducts(event.target.value);
+});
+
+// Evento de clique no ícone do carrinho (redireciona para carrinho.html)
+cartIcon.addEventListener('click', () => {
+    window.location.href = 'carrinho.html';
+});
+
+// Carregar produtos ao iniciar
 auth.onAuthStateChanged((user) => {
     if (user) {
         // Usuário está autenticado, carregar produtos e atualizar contador do carrinho
-        fetchProducts();
+        fetchAndDisplayProducts();
         updateCartCount();
     } else {
         // Usuário não está autenticado, limpar produtos e contador do carrinho
         productsContainer.innerHTML = '<p>Por favor, faça login para ver os produtos.</p>';
-        cartCountElement.textContent = '0';
+        clearCartCount();
     }
 });
+
+// Limpar o contador quando a página for carregada
+window.onload = () => {
+    clearCartCount();
+}
+
+
