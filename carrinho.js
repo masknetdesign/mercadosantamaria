@@ -123,7 +123,7 @@ checkoutBtn.addEventListener('click', async () => {
         const mensagem = `Olá! Meu pedido:\n${pedido.join('\n')}\nTotal: R$ ${totalPrice.toFixed(2)}\n\nDados do Cliente:\nNome: ${userData.nome}\nEmail: ${userData.email}\nTelefone: ${userData.telefone}`;
         
         // Aqui você pode substituir pelo seu número de WhatsApp ou de um atendente responsável
-        const numeroWhatsApp = '11988896517';
+        const numeroWhatsApp = '+5511988896517';
         const linkWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
         
         // Abrir WhatsApp com a mensagem pronta para envio
@@ -135,6 +135,9 @@ checkoutBtn.addEventListener('click', async () => {
             batch.delete(doc.ref);
         });
         await batch.commit();
+
+        // Atualizar o contador do carrinho e localStorage
+        localStorage.setItem('cartCount', JSON.stringify(0));
 
         // Navegar para produtos.html após finalizar a compra
         window.location.href = 'produtos.html';
@@ -154,3 +157,4 @@ auth.onAuthStateChanged(user => {
         totalPriceElement.textContent = '0.00';
     }
 });
+

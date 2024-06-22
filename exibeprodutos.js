@@ -8,12 +8,10 @@ const firebaseConfig = {
     appId: "1:561473746533:web:253f4b8be9009aa522b88c"
 };
 
-// Inicializando o Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// Referências aos elementos HTML
 const productsContainer = document.getElementById('products-container');
 const cartCountElement = document.getElementById('cart-count');
 const searchBox = document.getElementById('search-box');
