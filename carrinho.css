@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.items-container {
+    width: 60%;
+}
+
+.items-container .item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.items-container .item h3 {
+    margin: 0;
+}
+
+#cart-total {
+    width: 30%;
+    margin-left: 20px;
+}
+
+#cart-total h2 {
+    text-align: center;
+}
+
+#cart-total button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#cart-total button:hover {
+    background-color: #45a049;
+}

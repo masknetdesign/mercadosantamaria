@@ -4,33 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrinho de Compras</title>
-    <link rel="stylesheet" href="stylescarrinho.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-firestore.js"></script>
-    <script defer src="carrinho.js"></script>
+    <link rel="stylesheet" href="carrinho.css">
 </head>
 <body>
     <header>
-        <h1>Seu Carrinho de Compras</h1>
+        <h1>Carrinho de Compras</h1>
     </header>
-
-    <div id="cart-items" class="cart-items-container">
-        <!-- Itens do Carrinho serão adicionados aqui dinamicamente -->
-    </div>
-
-    <div id="total-price" class="total-price">
-        Total: R$ <span id="total-amount">0.00</span>
-    </div>
-
-    <button id="checkout-btn" class="checkout-btn">Concluir Compra</button>
-
-    <span id="cart-count" class="cart-count"></span> <!-- Contador de itens do carrinho -->
-
-    <footer>
-        <a href="produtos.html"><i class="material-icons">home</i></a>
-        <a href="carrinho.html"><i class="material-icons">shopping_cart</i></a>
-    </footer>
+    <main>
+        <div id="cart-items-container" class="items-container">
+            <!-- Itens do carrinho serão inseridos dinamicamente aqui -->
+        </div>
+        <div id="cart-total">
+            <h2>Total: R$ <span id="total-price">0.00</span></h2>
+            <button id="checkout-btn">Finalizar Compra</button>
+        </div>
+    </main>
+    <!-- Inclua o SDK do Firebase antes de carregar seu script -->
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-auth.js"></script>
+    <script>
+        
+    </script>
+    <script src="carrinho.js"></script>
 </body>
 </html>
